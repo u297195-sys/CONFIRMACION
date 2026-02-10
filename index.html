@@ -10,21 +10,19 @@
 <div id="contenido"></div>
 
 <label>
-  <input type="checkbox" id="check">
-  Confirmo que he recibido mis datos
+  <input type="checkbox" id="check"> Confirmo que he recibido mis datos
 </label>
 <br><br>
 
 <button onclick="confirmar()">Confirmar</button>
-
 <p id="mensaje"></p>
 
 <script>
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
 
-// Pega aquí la URL de tu Apps Script
-const api = "https://script.google.com/macros/s/AKfycbypMOXHS09pmlA1i2vuXBPSyUaZPckJfHNjRh6hgES8Sghw6NsW7S6-quW-GAfDolJ8pg/exec";
+// Pega la URL de tu web app publicada aquí
+const api = "https://script.google.com/macros/s/AKfycbxAZ9d2G1FteO3UZ1axKFMtHr8acp6OVYkHRQKXhwYSr-AdR2quVjG92TKw_jDnq91OKw/exec";
 
 fetch(api + "?id=" + id)
   .then(res => res.json())
@@ -34,7 +32,7 @@ fetch(api + "?id=" + id)
       return;
     }
     document.getElementById("saludo").innerText = "Hola, " + data.nombre;
-    document.getElementById("contenido").innerHTML = `<a href="${data.datos}" target="_blank">Abrir documento</a>`;
+    document.getElementById("contenido").innerHTML = "<a href='" + data.datos + "' target='_blank'>Abrir documento</a>";
   });
 
 function confirmar() {
@@ -48,15 +46,12 @@ function confirmar() {
     body: new URLSearchParams({ id })
   })
   .then(() => {
-    document.getElementById("mensaje").innerText =
-      "Gracias, confirmación registrada";
+    document.getElementById("mensaje").innerText = "Gracias, confirmación registrada";
   });
 }
 </script>
 
 </body>
 </html>
-
-
 
 
