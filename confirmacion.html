@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Confirmación de datos</title>
+</head>
+<body>
+
+<h2 id="saludo"></h2>
+<div id="contenido"></div>
+
+<label>
+  <input type="checkbox" id="check">
+  Confirmo que he recibido mis datos
+</label>
+<br><br>
+
+<button onclick="confirmar()">Confirmar</button>
+
+<p id="mensaje"></p>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+
+const api = "https://script.google.com/macros/s/AKfycbwkljcNXMvEeNWRLP-KCKvJ5uCfBbydo67iUyfwPRrI-I3nOMeNse6rWRyjfRM7X85j/exec";
+
+fetch(api + "?id=" + id)
+  .then(res => res.json())
+  .then(data => {
+    if (data === "ERROR") {
+      document.body.innerHTML = "Enlace no válido";
+      return;
+    }
+    document.getElementById("saludo").innerText = "Hola, " + data.nombre;
+    document.getElementById("contenido").innerHTML = data.datos;
+  });
+
+function confirmar() {
+  if (!document.getElementById("check").checked) {
+    alert("Debes confirmar primero");
+    return;
+  }
+
+  fetch(api, {
+    method: "POST",
+    body: new URLSearchParams({ id })
+  })
+  .then(() => {
+    document.getElementById("mensaje").innerText =
+      "Gracias, confirmación registrada";
+  });
+}
+</script>
+
+</body>
+</html>
