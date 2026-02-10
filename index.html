@@ -1,3 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Confirmación de datos</title>
+  <style>
+    body { font-family: Arial; background: #f7f7f7; text-align: center; padding:50px; }
+    input, button { padding:10px; font-size:16px; margin:5px; }
+    button { background:#4CAF50; color:white; border:none; cursor:pointer; }
+    button:hover { background:#45a049; }
+    #contenidoDatos { background:white; padding:30px; border-radius:10px; display:inline-block; }
+  </style>
+</head>
+<body>
+
 <div id="login">
   <h2>Introduce tu contraseña</h2>
   <input type="password" id="pwd" placeholder="Contraseña">
@@ -18,7 +33,7 @@
 <script>
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
-const api = "https://script.google.com/macros/s/AKfycbzusEmcMRL4ci1bNGt_lrM2m_v4TTKAC5Bj9LKK21VkkWl0yACSnduAU-RcbdGGV2Kq/exec";
+const api = "https://script.google.com/macros/s/AKfycbxPzMxi5GIr7NVnFaw2Qa8iFfeaxTtrZ67-jul1U2x_T_MHyqpr5TYY3gNarjJaxE8s/exec"; // <- aquí pones la URL publicada de Apps Script
 
 function verificar() {
   const pwd = document.getElementById("pwd").value;
@@ -28,6 +43,7 @@ function verificar() {
   })
   .then(res => res.text())
   .then(result => {
+    console.log("Respuesta servidor:", result);
     if(result === "OK") {
       document.getElementById("login").style.display = "none";
       document.getElementById("contenidoDatos").style.display = "block";
@@ -35,7 +51,8 @@ function verificar() {
     } else {
       document.getElementById("error").innerText = "Contraseña incorrecta";
     }
-  });
+  })
+  .catch(err => console.error("Error fetch:", err));
 }
 
 function cargarDatos() {
@@ -61,3 +78,6 @@ function confirmar() {
   });
 }
 </script>
+
+</body>
+</html>
