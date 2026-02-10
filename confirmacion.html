@@ -23,7 +23,7 @@
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
 
-const api = "https://script.google.com/macros/s/AKfycbwkljcNXMvEeNWRLP-KCKvJ5uCfBbydo67iUyfwPRrI-I3nOMeNse6rWRyjfRM7X85j/exec";
+const api = "https://script.google.com/macros/s/AKfycbxJj5RNrlhoOPjpOprH5-tmQ4NXq76u7mCffsjR4LdV0h3rWYiblO2I092djEho5Io/exec";
 
 fetch(api + "?id=" + id)
   .then(res => res.json())
@@ -55,3 +55,4 @@ function confirmar() {
 
 </body>
 </html>
+
