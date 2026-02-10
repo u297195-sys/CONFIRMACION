@@ -1,57 +1,63 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Confirmación de datos</title>
-</head>
-<body>
+<div id="login">
+  <h2>Introduce tu contraseña</h2>
+  <input type="password" id="pwd" placeholder="Contraseña">
+  <button onclick="verificar()">Entrar</button>
+  <p id="error" style="color:red;"></p>
+</div>
 
-<h2 id="saludo"></h2>
-<div id="contenido"></div>
-
-<label>
-  <input type="checkbox" id="check"> Confirmo que he recibido mis datos
-</label>
-<br><br>
-
-<button onclick="confirmar()">Confirmar</button>
-<p id="mensaje"></p>
+<div id="contenidoDatos" style="display:none;">
+  <h2 id="saludo"></h2>
+  <div id="contenido"></div>
+  <label>
+    <input type="checkbox" id="check"> Confirmo que he recibido mis datos
+  </label><br><br>
+  <button onclick="confirmar()">Confirmar</button>
+  <p id="mensaje"></p>
+</div>
 
 <script>
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
+const api = "https://script.google.com/macros/s/AKfycbzusEmcMRL4ci1bNGt_lrM2m_v4TTKAC5Bj9LKK21VkkWl0yACSnduAU-RcbdGGV2Kq/exec";
 
-// Pega la URL de tu web app publicada aquí
-const api = "https://script.google.com/macros/s/AKfycbxAZ9d2G1FteO3UZ1axKFMtHr8acp6OVYkHRQKXhwYSr-AdR2quVjG92TKw_jDnq91OKw/exec";
-
-fetch(api + "?id=" + id)
-  .then(res => res.json())
-  .then(data => {
-    if (data === "ERROR") {
-      document.body.innerHTML = "Enlace no válido";
-      return;
+function verificar() {
+  const pwd = document.getElementById("pwd").value;
+  fetch(api, {
+    method: "POST",
+    body: new URLSearchParams({ id, password: pwd })
+  })
+  .then(res => res.text())
+  .then(result => {
+    if(result === "OK") {
+      document.getElementById("login").style.display = "none";
+      document.getElementById("contenidoDatos").style.display = "block";
+      cargarDatos();
+    } else {
+      document.getElementById("error").innerText = "Contraseña incorrecta";
     }
-    document.getElementById("saludo").innerText = "Hola, " + data.nombre;
-    document.getElementById("contenido").innerHTML = "<a href='" + data.datos + "' target='_blank'>Abrir documento</a>";
   });
+}
+
+function cargarDatos() {
+  fetch(api + "?id=" + id)
+    .then(res => res.json())
+    .then(data => {
+      if(data === "ERROR") {
+        document.body.innerHTML = "Enlace no válido";
+        return;
+      }
+      document.getElementById("saludo").innerText = "Hola, " + data.nombre;
+      document.getElementById("contenido").innerHTML = "<a href='" + data.datos + "' target='_blank'>Abrir documento</a>";
+    });
+}
 
 function confirmar() {
-  if (!document.getElementById("check").checked) {
-    alert("Debes confirmar primero");
-    return;
-  }
-
   fetch(api, {
     method: "POST",
     body: new URLSearchParams({ id })
   })
   .then(() => {
-    document.getElementById("mensaje").innerText = "Gracias, confirmación registrada";
+    document.getElementById("mensaje").innerText = "Confirmación registrada";
   });
 }
 </script>
-
-</body>
-</html>
-
-
