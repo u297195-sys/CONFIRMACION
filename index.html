@@ -24,7 +24,7 @@ const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
 
 // Pega aquí la URL de tu Apps Script
-const api = "https://script.google.com/macros/s/AKfycbwhHcFcPg7lwPA_yN-gvkphE2Bvz8XlLglOLgmF0tNMl0-xt4cAez5UYky82wylOxBpkQ/exec";
+const api = "https://script.google.com/macros/s/AKfycbypMOXHS09pmlA1i2vuXBPSyUaZPckJfHNjRh6hgES8Sghw6NsW7S6-quW-GAfDolJ8pg/exec";
 
 fetch(api + "?id=" + id)
   .then(res => res.json())
@@ -56,6 +56,7 @@ function confirmar() {
 
 </body>
 </html>
+
 
 
 
