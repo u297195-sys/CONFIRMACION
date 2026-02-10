@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
@@ -23,7 +23,8 @@
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
 
-const api = "https://script.google.com/macros/s/AKfycbyPSxDXDIWDqa8ffgTyRwNZ8kKtqacOkhflie3tMbHnUM9pExpZdOuAJVtKtKy9ooMe/exec";
+// Pega aquí la URL de tu Apps Script
+const api = "https://script.google.com/macros/s/AKfycbwhHcFcPg7lwPA_yN-gvkphE2Bvz8XlLglOLgmF0tNMl0-xt4cAez5UYky82wylOxBpkQ/exec";
 
 fetch(api + "?id=" + id)
   .then(res => res.json())
@@ -33,7 +34,7 @@ fetch(api + "?id=" + id)
       return;
     }
     document.getElementById("saludo").innerText = "Hola, " + data.nombre;
-    document.getElementById("contenido").innerHTML = data.datos;
+    document.getElementById("contenido").innerHTML = `<a href="${data.datos}" target="_blank">Abrir documento</a>`;
   });
 
 function confirmar() {
@@ -55,5 +56,6 @@ function confirmar() {
 
 </body>
 </html>
+
 
 
