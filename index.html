@@ -5,7 +5,6 @@
 <title>Portal de Confirmación</title>
 
 <style>
-
 body{
   font-family: Arial, sans-serif;
   background: linear-gradient(135deg,#e9eef5,#d8e1ec);
@@ -13,7 +12,6 @@ body{
   padding:40px;
 }
 
-/* TARJETA */
 .card{
   background:white;
   max-width:520px;
@@ -23,22 +21,14 @@ body{
   box-shadow:0 10px 35px rgba(0,0,0,0.12);
 }
 
-/* LOGO */
 .logo{
   width:170px;
   margin-bottom:25px;
 }
 
-/* TITULOS */
-h2{
-  color:#2f4f6f;
-}
+h2{ color:#2f4f6f; }
+h3{ color:#3b5f82; }
 
-h3{
-  color:#3b5f82;
-}
-
-/* INPUTS */
 input{
   padding:14px;
   font-size:16px;
@@ -48,13 +38,12 @@ input{
   border:1px solid #ccd6e0;
 }
 
-/* BOTONES */
 button{
   padding:14px;
   font-size:16px;
   margin:10px;
   width:85%;
-  background:#3b5f82; /* azul apagado */
+  background:#3b5f82;
   color:white;
   border:none;
   border-radius:8px;
@@ -62,11 +51,8 @@ button{
   transition:0.2s;
 }
 
-button:hover{
-  background:#2f4f6f;
-}
+button:hover{ background:#2f4f6f; }
 
-/* SPINNER */
 .spinner{
   border:5px solid #e5eaf0;
   border-top:5px solid #3b5f82;
@@ -83,7 +69,6 @@ button:hover{
   100%{transform:rotate(360deg)}
 }
 
-/* LINK BOX */
 .linkBox{
   background:#eef2f6;
   padding:14px;
@@ -100,38 +85,23 @@ button:hover{
 
 <!-- LOGIN -->
 <div id="login" class="card">
-
 <img src="https://raw.githubusercontent.com/u297195-sys/CONFIRMACION/refs/heads/main/CIC%20MONO_0.png" class="logo">
-
 <h2>Acceso al portal de confirmación</h2>
-
-<p>
-Buenos días.<br>
-El usuario con el que está intentando realizar la consulta es:
-</p>
-
+<p>Buenos días.<br>El usuario con el que está intentando realizar la consulta es:</p>
 <p id="usuarioConsulta" style="font-weight:bold">Cargando...</p>
-
 <input type="password" id="pwd" placeholder="Introduzca su contraseña">
 <br>
 <button onclick="verificar()">Acceder</button>
-
 <div class="spinner" id="spinnerLogin"></div>
 <p id="error" style="color:#c0392b"></p>
-
 </div>
 
 <!-- CONTENIDO -->
 <div id="contenidoDatos" class="card" style="display:none">
-
 <img src="https://raw.githubusercontent.com/u297195-sys/CONFIRMACION/refs/heads/main/CIC%20MONO_0.png" class="logo">
-
 <h2>Portal de confirmación de recepción de datos</h2>
-
 <p>Su enlace al documento puede tardar unos segundos en cargar.</p>
-
 <h3 id="saludo"></h3>
-
 <div id="contenido"></div>
 
 <div id="zonaConfirmacion">
@@ -144,124 +114,106 @@ Confirmo la recepción de mis datos
 </div>
 
 <p id="mensaje"></p>
-
 <div class="spinner" id="spinnerDatos"></div>
-
 </div>
 
 <script>
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+const api = "https://script.google.com/macros/s/AKfycby0UL254f-vn6F5QX6wKfdDZzqtJDRoX8KOWUNndOnEwUkZ2RMpaJHRZFIRk-lpt2Rfow/exec";
 
-const params=new URLSearchParams(window.location.search);
-const id=params.get("id");
+function mostrarSpinner(id){ document.getElementById(id).style.display="block"; }
+function ocultarSpinner(id){ document.getElementById(id).style.display="none"; }
 
-const api="https://script.google.com/macros/s/AKfycby0UL254f-vn6F5QX6wKfdDZzqtJDRoX8KOWUNndOnEwUkZ2RMpaJHRZFIRk-lpt2Rfow/exec"; // ← tu Apps Script
-
-function mostrarSpinner(id){document.getElementById(id).style.display="block";}
-function ocultarSpinner(id){document.getElementById(id).style.display="none";}
-
-// Antes de mostrar login, cargamos nombre para mostrarlo
+// Cargar el nombre del usuario para mostrarlo en login
 function cargarNombreUsuario(){
     mostrarSpinner("spinnerLogin");
     fetch(api+"?id="+id)
-    .then(res => res.json())
-    .then(data=>{
-        ocultarSpinner("spinnerLogin");
-        if(data==="ERROR"){
-            document.getElementById("usuarioConsulta").innerText = "Usuario no válido";
-        } else {
-            document.getElementById("usuarioConsulta").innerText = data.nombre;
-        }
-    })
-    .catch(err=>{
-        ocultarSpinner("spinnerLogin");
-        document.getElementById("usuarioConsulta").innerText = "Error al cargar usuario";
-        console.error(err);
-    });
+      .then(res=>res.json())
+      .then(data=>{
+          ocultarSpinner("spinnerLogin");
+          if(data==="ERROR"){
+            document.getElementById("usuarioConsulta").innerText="Usuario no válido";
+          } else {
+            document.getElementById("usuarioConsulta").innerText=data.nombre;
+          }
+      })
+      .catch(err=>{
+          ocultarSpinner("spinnerLogin");
+          document.getElementById("usuarioConsulta").innerText="Error al cargar usuario";
+          console.error(err);
+      });
 }
 
-// Ejecutamos al cargar la página
+// Ejecutar al cargar página
 cargarNombreUsuario();
 
-
-// LOGIN
+// LOGIN y contraseña
 function verificar(){
-const pwd=document.getElementById("pwd").value;
-mostrarSpinner("spinnerLogin");
-
-fetch(api,{
-method:"POST",
-body:new URLSearchParams({id,password:pwd})
-})
-.then(res=>res.text())
-.then(result=>{
-ocultarSpinner("spinnerLogin");
-
-if(result==="OK"){
-document.getElementById("login").style.display="none";
-document.getElementById("contenidoDatos").style.display="block";
-cargarDatos();
-}else{
-document.getElementById("error").innerText="Contraseña incorrecta";
+  const pwd = document.getElementById("pwd").value;
+  mostrarSpinner("spinnerLogin");
+  fetch(api,{
+    method:"POST",
+    body: new URLSearchParams({id,password:pwd})
+  })
+  .then(res=>res.text())
+  .then(result=>{
+    ocultarSpinner("spinnerLogin");
+    if(result==="OK"){
+      document.getElementById("login").style.display="none";
+      document.getElementById("contenidoDatos").style.display="block";
+      cargarDatos();
+    } else if(result==="PASSWORD_INCORRECT"){
+      document.getElementById("error").innerText="Contraseña incorrecta";
+    } else {
+      document.getElementById("error").innerText="Error al procesar el login";
+    }
+  });
 }
-});
-}
-
 
 // CARGAR DATOS
 function cargarDatos(){
-mostrarSpinner("spinnerDatos");
+    mostrarSpinner("spinnerDatos");
+    fetch(api+"?id="+id)
+      .then(res=>res.json())
+      .then(data=>{
+        ocultarSpinner("spinnerDatos");
+        if(data==="ERROR"){
+          document.body.innerHTML="Enlace no válido";
+          return;
+        }
 
-fetch(api+"?id="+id)
-.then(res=>res.json())
-.then(data=>{
-ocultarSpinner("spinnerDatos");
+        document.getElementById("saludo").innerText="Estimado/a "+data.nombre;
+        document.getElementById("contenido").innerHTML=`
+        <p><b>Documento disponible:</b></p>
+        <div class="linkBox">${data.datos}</div>
+        <br>
+        <a href="${data.datos}" target="_blank">
+          <button>Abrir documento</button>
+        </a>`;
 
-if(data==="ERROR"){
-document.body.innerHTML="Enlace no válido";
-return;
+        if(data.confirmado==="SI"){
+          document.getElementById("zonaConfirmacion").style.display="none";
+          document.getElementById("mensaje").innerHTML="<b>✔ La recepción de datos ya ha sido confirmada previamente.</b>";
+        }
+      });
 }
-
-document.getElementById("saludo").innerText=
-"Estimado/a "+data.nombre;
-
-document.getElementById("contenido").innerHTML=`
-<p><b>Documento disponible:</b></p>
-<div class="linkBox">${data.datos}</div>
-<br>
-<a href="${data.datos}" target="_blank">
-<button>Abrir documento</button>
-</a>
-`;
-
-if(data.confirmado==="SI"){
-document.getElementById("zonaConfirmacion").style.display="none";
-document.getElementById("mensaje").innerHTML=
-"<b>✔ La recepción de datos ya ha sido confirmada previamente.</b>";
-}
-});
-}
-
 
 // CONFIRMAR
 function confirmar(){
-if(!document.getElementById("check").checked){
-alert("Debe confirmar primero la recepción.");
-return;
+  if(!document.getElementById("check").checked){
+    alert("Debe confirmar primero la recepción.");
+    return;
+  }
+  fetch(api,{
+    method:"POST",
+    body:new URLSearchParams({id})
+  })
+  .then(()=>{
+    document.getElementById("zonaConfirmacion").style.display="none";
+    document.getElementById("mensaje").innerHTML="<b>✔ Confirmación registrada correctamente.</b>";
+  });
 }
-
-fetch(api,{
-method:"POST",
-body:new URLSearchParams({id})
-})
-.then(()=>{
-document.getElementById("zonaConfirmacion").style.display="none";
-document.getElementById("mensaje").innerHTML=
-"<b>✔ Confirmación registrada correctamente.</b>";
-});
-}
-
 </script>
-
 </body>
 </html>
-
