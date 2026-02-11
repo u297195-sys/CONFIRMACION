@@ -110,7 +110,7 @@ Buenos días.<br>
 El usuario con el que está intentando realizar la consulta es:
 </p>
 
-<p id="usuarioConsulta" style="font-weight:bold"></p>
+<p id="usuarioConsulta" style="font-weight:bold">Cargando...</p>
 
 <input type="password" id="pwd" placeholder="Introduzca su contraseña">
 <br>
@@ -154,17 +154,33 @@ Confirmo la recepción de mis datos
 const params=new URLSearchParams(window.location.search);
 const id=params.get("id");
 
-const api="https://script.google.com/macros/s/AKfycby0UL254f-vn6F5QX6wKfdDZzqtJDRoX8KOWUNndOnEwUkZ2RMpaJHRZFIRk-lpt2Rfow/exec"; // ← pega tu URL de Apps Script
+const api="https://script.google.com/macros/s/AKfycby0UL254f-vn6F5QX6wKfdDZzqtJDRoX8KOWUNndOnEwUkZ2RMpaJHRZFIRk-lpt2Rfow/exec"; // ← tu Apps Script
 
-document.getElementById("usuarioConsulta").innerText=nombre || "No identificado";
+function mostrarSpinner(id){document.getElementById(id).style.display="block";}
+function ocultarSpinner(id){document.getElementById(id).style.display="none";}
 
-function mostrarSpinner(id){
-  document.getElementById(id).style.display="block"
+// Antes de mostrar login, cargamos nombre para mostrarlo
+function cargarNombreUsuario(){
+    mostrarSpinner("spinnerLogin");
+    fetch(api+"?id="+id)
+    .then(res => res.json())
+    .then(data=>{
+        ocultarSpinner("spinnerLogin");
+        if(data==="ERROR"){
+            document.getElementById("usuarioConsulta").innerText = "Usuario no válido";
+        } else {
+            document.getElementById("usuarioConsulta").innerText = data.nombre;
+        }
+    })
+    .catch(err=>{
+        ocultarSpinner("spinnerLogin");
+        document.getElementById("usuarioConsulta").innerText = "Error al cargar usuario";
+        console.error(err);
+    });
 }
 
-function ocultarSpinner(id){
-  document.getElementById(id).style.display="none"
-}
+// Ejecutamos al cargar la página
+cargarNombreUsuario();
 
 
 // LOGIN
@@ -248,3 +264,4 @@ document.getElementById("mensaje").innerHTML=
 
 </body>
 </html>
+
