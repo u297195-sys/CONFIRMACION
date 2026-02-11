@@ -3,84 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <title>Portal de Confirmación</title>
-
 <style>
-body{
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg,#e9eef5,#d8e1ec);
-  text-align:center;
-  padding:40px;
-}
-
-.card{
-  background:white;
-  max-width:520px;
-  margin:auto;
-  padding:45px;
-  border-radius:14px;
-  box-shadow:0 10px 35px rgba(0,0,0,0.12);
-}
-
-.logo{
-  width:170px;
-  margin-bottom:25px;
-}
-
-h2{ color:#2f4f6f; }
-h3{ color:#3b5f82; }
-
-input{
-  padding:14px;
-  font-size:16px;
-  margin:10px;
-  width:85%;
-  border-radius:8px;
-  border:1px solid #ccd6e0;
-}
-
-button{
-  padding:14px;
-  font-size:16px;
-  margin:10px;
-  width:85%;
-  background:#3b5f82;
-  color:white;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  transition:0.2s;
-}
-
+body{ font-family:Arial,sans-serif; background:linear-gradient(135deg,#e9eef5,#d8e1ec); text-align:center; padding:40px; }
+.card{ background:white; max-width:520px; margin:auto; padding:45px; border-radius:14px; box-shadow:0 10px 35px rgba(0,0,0,0.12); }
+.logo{ width:170px; margin-bottom:25px; }
+h2{ color:#2f4f6f; } h3{ color:#3b5f82; }
+input{ padding:14px; font-size:16px; margin:10px; width:85%; border-radius:8px; border:1px solid #ccd6e0; }
+button{ padding:14px; font-size:16px; margin:10px; width:85%; background:#3b5f82; color:white; border:none; border-radius:8px; cursor:pointer; transition:0.2s; }
 button:hover{ background:#2f4f6f; }
-
-.spinner{
-  border:5px solid #e5eaf0;
-  border-top:5px solid #3b5f82;
-  border-radius:50%;
-  width:45px;
-  height:45px;
-  animation:spin 1s linear infinite;
-  margin:25px auto;
-  display:none;
-}
-
-@keyframes spin{
-  0%{transform:rotate(0deg)}
-  100%{transform:rotate(360deg)}
-}
-
-.linkBox{
-  background:#eef2f6;
-  padding:14px;
-  border-radius:8px;
-  word-break:break-all;
-  margin-top:12px;
-  border:1px solid #d6dde6;
-}
-
+.spinner{ border:5px solid #e5eaf0; border-top:5px solid #3b5f82; border-radius:50%; width:45px; height:45px; animation:spin 1s linear infinite; margin:25px auto; display:none; }
+@keyframes spin{ 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+.linkBox{ background:#eef2f6; padding:14px; border-radius:8px; word-break:break-all; margin-top:12px; border:1px solid #d6dde6; }
 </style>
 </head>
-
 <body>
 
 <!-- LOGIN -->
@@ -88,7 +23,7 @@ button:hover{ background:#2f4f6f; }
 <img src="https://raw.githubusercontent.com/u297195-sys/CONFIRMACION/refs/heads/main/CIC%20MONO_0.png" class="logo">
 <h2>Acceso al portal de confirmación</h2>
 <p>Buenos días.<br>El usuario con el que está intentando realizar la consulta es:</p>
-<p id="nombre" style="font-weight:bold">Cargando...</p>
+<p id="usuarioConsulta" style="font-weight:bold">Cargando...</p>
 <input type="password" id="pwd" placeholder="Introduzca su contraseña">
 <br>
 <button onclick="verificar()">Acceder</button>
@@ -103,16 +38,10 @@ button:hover{ background:#2f4f6f; }
 <p>Su enlace al documento puede tardar unos segundos en cargar.</p>
 <h3 id="saludo"></h3>
 <div id="contenido"></div>
-
 <div id="zonaConfirmacion">
-<label>
-<input type="checkbox" id="check">
-Confirmo la recepción de mis datos
-</label>
-<br><br>
+<label><input type="checkbox" id="check"> Confirmo la recepción de mis datos</label><br><br>
 <button onclick="confirmar()">Registrar confirmación</button>
 </div>
-
 <p id="mensaje"></p>
 <div class="spinner" id="spinnerDatos"></div>
 </div>
@@ -120,83 +49,75 @@ Confirmo la recepción de mis datos
 <script>
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
-const api = "https://script.google.com/macros/s/AKfycby0UL254f-vn6F5QX6wKfdDZzqtJDRoX8KOWUNndOnEwUkZ2RMpaJHRZFIRk-lpt2Rfow/exec";
+const api = "TU_URL_APPS_SCRIPT"; // <- pega aquí tu URL pública de Apps Script
 
 function mostrarSpinner(id){ document.getElementById(id).style.display="block"; }
 function ocultarSpinner(id){ document.getElementById(id).style.display="none"; }
 
-// Cargar el nombre del usuario para mostrarlo en login
+// Cargar nombre al abrir la página
 function cargarNombreUsuario(){
-    mostrarSpinner("spinnerLogin");
-    fetch(api+"?id="+id)
-      .then(res=>res.json())
-      .then(data=>{
-          ocultarSpinner("spinnerLogin");
-          if(data==="ERROR"){
-            document.getElementById("nombre").innerText="Usuario no válido";
-          } else {
-            document.getElementById("nombre").innerText=data.nombre;
-          }
-      })
-      .catch(err=>{
-          ocultarSpinner("spinnerLogin");
-          document.getElementById("nombre").innerText="Error al cargar usuario";
-          console.error(err);
-      });
+  if(!id){
+    document.getElementById("usuarioConsulta").innerText="ID no proporcionado en URL";
+    return;
+  }
+  mostrarSpinner("spinnerLogin");
+  fetch(api+"?id="+id)
+    .then(res=>res.json())
+    .then(data=>{
+      ocultarSpinner("spinnerLogin");
+      if(data==="ERROR"){ document.getElementById("usuarioConsulta").innerText="Usuario no válido"; }
+      else{ document.getElementById("usuarioConsulta").innerText=data.nombre; }
+    })
+    .catch(err=>{
+      ocultarSpinner("spinnerLogin");
+      document.getElementById("usuarioConsulta").innerText="Error al cargar usuario";
+      console.error(err);
+    });
 }
 
-// Ejecutar al cargar página
+// Ejecutar al cargar la página
 cargarNombreUsuario();
 
-// LOGIN y contraseña
+// LOGIN
 function verificar(){
   const pwd = document.getElementById("pwd").value;
   mostrarSpinner("spinnerLogin");
-  fetch(api,{
-    method:"POST",
-    body: new URLSearchParams({id,password:pwd})
-  })
-  .then(res=>res.text())
-  .then(result=>{
-    ocultarSpinner("spinnerLogin");
-    if(result==="OK"){
-      document.getElementById("login").style.display="none";
-      document.getElementById("contenidoDatos").style.display="block";
-      cargarDatos();
-    } else if(result==="PASSWORD_INCORRECT"){
-      document.getElementById("error").innerText="Contraseña incorrecta";
-    } else {
-      document.getElementById("error").innerText="Error al procesar el login";
-    }
-  });
+  fetch(api,{ method:"POST", body:new URLSearchParams({id,password:pwd}) })
+    .then(res=>res.text())
+    .then(result=>{
+      ocultarSpinner("spinnerLogin");
+      if(result==="OK"){
+        document.getElementById("login").style.display="none";
+        document.getElementById("contenidoDatos").style.display="block";
+        cargarDatos();
+      } else if(result==="PASSWORD_INCORRECT"){
+        document.getElementById("error").innerText="Contraseña incorrecta";
+      } else {
+        document.getElementById("error").innerText="Error al procesar el login";
+      }
+    });
 }
 
 // CARGAR DATOS
 function cargarDatos(){
-    mostrarSpinner("spinnerDatos");
-    fetch(api+"?id="+id)
-      .then(res=>res.json())
-      .then(data=>{
-        ocultarSpinner("spinnerDatos");
-        if(data==="ERROR"){
-          document.body.innerHTML="Enlace no válido";
-          return;
-        }
-
-        document.getElementById("saludo").innerText="Estimado/a "+data.nombre;
-        document.getElementById("contenido").innerHTML=`
+  mostrarSpinner("spinnerDatos");
+  fetch(api+"?id="+id)
+    .then(res=>res.json())
+    .then(data=>{
+      ocultarSpinner("spinnerDatos");
+      if(data==="ERROR"){ document.body.innerHTML="Enlace no válido"; return; }
+      document.getElementById("saludo").innerText="Estimado/a "+data.nombre;
+      document.getElementById("contenido").innerHTML=`
         <p><b>Documento disponible:</b></p>
         <div class="linkBox">${data.datos}</div>
         <br>
-        <a href="${data.datos}" target="_blank">
-          <button>Abrir documento</button>
-        </a>`;
-
-        if(data.confirmado==="SI"){
-          document.getElementById("zonaConfirmacion").style.display="none";
-          document.getElementById("mensaje").innerHTML="<b>✔ La recepción de datos ya ha sido confirmada previamente.</b>";
-        }
-      });
+        <a href="${data.datos}" target="_blank"><button>Abrir documento</button></a>
+      `;
+      if(data.confirmado==="SI"){
+        document.getElementById("zonaConfirmacion").style.display="none";
+        document.getElementById("mensaje").innerHTML="<b>✔ La recepción de datos ya ha sido confirmada previamente.</b>";
+      }
+    });
 }
 
 // CONFIRMAR
@@ -205,14 +126,11 @@ function confirmar(){
     alert("Debe confirmar primero la recepción.");
     return;
   }
-  fetch(api,{
-    method:"POST",
-    body:new URLSearchParams({id})
-  })
-  .then(()=>{
-    document.getElementById("zonaConfirmacion").style.display="none";
-    document.getElementById("mensaje").innerHTML="<b>✔ Confirmación registrada correctamente.</b>";
-  });
+  fetch(api,{ method:"POST", body:new URLSearchParams({id}) })
+    .then(()=>{
+      document.getElementById("zonaConfirmacion").style.display="none";
+      document.getElementById("mensaje").innerHTML="<b>✔ Confirmación registrada correctamente.</b>";
+    });
 }
 </script>
 </body>
