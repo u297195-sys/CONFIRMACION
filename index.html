@@ -20,31 +20,34 @@ button:hover{ background:#2f4f6f; }
 
 <!-- LOGIN -->
 <div id="login" class="card">
-<img src="https://raw.githubusercontent.com/u297195-sys/CONFIRMACION/refs/heads/main/CIC%20MONO_0.png" class="logo">
-<h2>Acceso al portal de confirmación</h2>
-<p>Buenos días.<br>El usuario con el que está intentando realizar la consulta es:</p>
-<p id="usuarioConsulta" style="font-weight:bold">Cargando...</p>
-<input type="password" id="pwd" placeholder="Introduzca su contraseña">
-<br>
-<button onclick="verificar()">Acceder</button>
-<div class="spinner" id="spinnerLogin"></div>
-<p id="error" style="color:#c0392b"></p>
+  <img src="https://raw.githubusercontent.com/u297195-sys/CONFIRMACION/refs/heads/main/CIC%20MONO_0.png" class="logo">
+  <h2>Acceso al portal de confirmación</h2>
+  <h3 style="color:#3b5f82; margin-bottom:20px;">Unidad de Proteómica</h3>
+  <p>Buenos días.<br>El usuario con el que está intentando realizar la consulta es:</p>
+  <p id="usuarioConsulta" style="font-weight:bold">Cargando...</p>
+  <input type="password" id="pwd" placeholder="Introduzca su contraseña">
+  <br>
+  <button onclick="verificar()">Acceder</button>
+  <div class="spinner" id="spinnerLogin"></div>
+  <p id="error" style="color:#c0392b"></p>
 </div>
 
 <!-- CONTENIDO -->
 <div id="contenidoDatos" class="card" style="display:none">
-<img src="https://raw.githubusercontent.com/u297195-sys/CONFIRMACION/refs/heads/main/CIC%20MONO_0.png" class="logo">
-<h2>Portal de confirmación de recepción de datos</h2>
-<p>Su enlace al documento puede tardar unos segundos en cargar.</p>
-<h3 id="saludo"></h3>
-<div id="contenido"></div>
-<div id="zonaConfirmacion">
-<label><input type="checkbox" id="check"> Confirmo la recepción de mis datos</label><br><br>
-<button onclick="confirmar()">Registrar confirmación</button>
+  <img src="https://raw.githubusercontent.com/u297195-sys/CONFIRMACION/refs/heads/main/CIC%20MONO_0.png" class="logo">
+  <h2>Portal de confirmación de recepción de datos</h2>
+  <h3 style="color:#3b5f82; margin-bottom:20px;">Unidad de Proteómica</h3>
+  <p>Su enlace al documento puede tardar unos segundos en cargar.</p>
+  <h3 id="saludo"></h3>
+  <div id="contenido"></div>
+  <div id="zonaConfirmacion">
+    <label><input type="checkbox" id="check"> Confirmo la recepción de mis datos</label><br><br>
+    <button onclick="confirmar()">Registrar confirmación</button>
+  </div>
+  <p id="mensaje"></p>
+  <div class="spinner" id="spinnerDatos"></div>
 </div>
-<p id="mensaje"></p>
-<div class="spinner" id="spinnerDatos"></div>
-</div>
+
 
 <script>
 const params = new URLSearchParams(window.location.search);
