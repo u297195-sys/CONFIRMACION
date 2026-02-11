@@ -133,14 +133,14 @@ function cargarNombreUsuario(){
       .then(data=>{
           ocultarSpinner("spinnerLogin");
           if(data==="ERROR"){
-            document.getElementById("usuarioConsulta").innerText="Usuario no válido";
+            document.getElementById("nombre").innerText="Usuario no válido";
           } else {
-            document.getElementById("usuarioConsulta").innerText=data.nombre;
+            document.getElementById("nombre").innerText=data.nombre;
           }
       })
       .catch(err=>{
           ocultarSpinner("spinnerLogin");
-          document.getElementById("usuarioConsulta").innerText="Error al cargar usuario";
+          document.getElementById("nombre").innerText="Error al cargar usuario";
           console.error(err);
       });
 }
