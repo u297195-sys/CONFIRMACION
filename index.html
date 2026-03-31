@@ -4,16 +4,66 @@
 <meta charset="UTF-8">
 <title>Portal de Confirmación</title>
 <style>
-body{ font-family:Arial,sans-serif; background:linear-gradient(135deg,#e9eef5,#d8e1ec); text-align:center; padding:40px; }
-.card{ background:white; max-width:520px; margin:auto; padding:45px; border-radius:14px; box-shadow:0 10px 35px rgba(0,0,0,0.12); }
+body{
+  font-family:Arial,sans-serif;
+  background:linear-gradient(135deg,#e9eef5,#d8e1ec);
+  text-align:center;
+  padding:40px;
+}
+.card{
+  background:white;
+  max-width:520px;
+  margin:auto;
+  padding:45px;
+  border-radius:14px;
+  box-shadow:0 10px 35px rgba(0,0,0,0.12);
+}
 .logo{ width:170px; margin-bottom:25px; }
-h2{ color:#2f4f6f; } h3{ color:#3b5f82; }
-input{ padding:14px; font-size:16px; margin:10px; width:85%; border-radius:8px; border:1px solid #ccd6e0; }
-button{ padding:14px; font-size:16px; margin:10px; width:85%; background:#3b5f82; color:white; border:none; border-radius:8px; cursor:pointer; transition:0.2s; }
+h2{ color:#2f4f6f; }
+h3{ color:#3b5f82; }
+input{
+  padding:14px;
+  font-size:16px;
+  margin:10px;
+  width:85%;
+  border-radius:8px;
+  border:1px solid #ccd6e0;
+}
+button{
+  padding:14px;
+  font-size:16px;
+  margin:10px;
+  width:85%;
+  background:#3b5f82;
+  color:white;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  transition:0.2s;
+}
 button:hover{ background:#2f4f6f; }
-.spinner{ border:5px solid #e5eaf0; border-top:5px solid #3b5f82; border-radius:50%; width:45px; height:45px; animation:spin 1s linear infinite; margin:25px auto; display:none; }
-@keyframes spin{ 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
-.linkBox{ background:#eef2f6; padding:14px; border-radius:8px; word-break:break-all; margin-top:12px; border:1px solid #d6dde6; }
+.spinner{
+  border:5px solid #e5eaf0;
+  border-top:5px solid #3b5f82;
+  border-radius:50%;
+  width:45px;
+  height:45px;
+  animation:spin 1s linear infinite;
+  margin:25px auto;
+  display:none;
+}
+@keyframes spin{
+  0%{transform:rotate(0deg)}
+  100%{transform:rotate(360deg)}
+}
+.linkBox{
+  background:#eef2f6;
+  padding:14px;
+  border-radius:8px;
+  word-break:break-all;
+  margin-top:12px;
+  border:1px solid #d6dde6;
+}
 </style>
 </head>
 <body>
@@ -25,9 +75,14 @@ button:hover{ background:#2f4f6f; }
   <h3 style="color:#3b5f82; margin-bottom:20px;">Unidad de Proteómica</h3>
   <p>Buenos días.<br>El usuario con el que está intentando realizar la consulta es:</p>
   <p id="usuarioConsulta" style="font-weight:bold">Cargando...</p>
-  <input type="password" id="pwd" placeholder="Introduzca su contraseña">
-  <br>
-  <button onclick="verificar()">Acceder</button>
+
+  <!-- FORM para que Enter haga submit controlado -->
+  <form onsubmit="verificar(); return false;">
+    <input type="password" id="pwd" placeholder="Introduzca su contraseña" autocomplete="off">
+    <br>
+    <button type="submit">Acceder</button>
+  </form>
+
   <div class="spinner" id="spinnerLogin"></div>
   <p id="error" style="color:#c0392b"></p>
 </div>
@@ -39,23 +94,33 @@ button:hover{ background:#2f4f6f; }
   <h3 style="color:#3b5f82; margin-bottom:20px;">Unidad de Proteómica</h3>
   <p>Su enlace al documento puede tardar unos segundos en cargar.</p>
   <h3 id="saludo"></h3>
+
   <div id="zonaConfirmacion">
     <label><input type="checkbox" id="check"> Confirmo la recepción de mis datos</label><br><br>
     <button onclick="confirmar()">Registrar confirmación</button>
   </div>
+
   <p id="mensaje"></p>
   <div id="contenido"></div>
   <div class="spinner" id="spinnerDatos"></div>
 </div>
 
-
 <script>
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
-const api = "https://script.google.com/macros/s/AKfycbyTg9uzB2zVP6h7bN0L-b0SwsUUlaP2OHThdqoNkydvF0Kw6tsAdPRdnzi1957NU7YrRQ/exec"; // <- pega aquí tu URL pública de Apps Script
 
-function mostrarSpinner(id){ document.getElementById(id).style.display="block"; }
-function ocultarSpinner(id){ document.getElementById(id).style.display="none"; }
+// PEGA AQUÍ TU URL DE APPS SCRIPT
+const api = "https://script.google.com/macros/s/AKfycbz78LbEo3plaQGZShtulwyQB3MRC6igawRyqZCNnNo7HwmAj2C0M-CnFjQm5wKCjkZ0AA/exec";
+
+// Variable para saber si ha iniciado sesión correctamente
+let autenticado = false;
+
+function mostrarSpinner(id){
+  document.getElementById(id).style.display="block";
+}
+function ocultarSpinner(id){
+  document.getElementById(id).style.display="none";
+}
 
 // Cargar nombre al abrir la página
 function cargarNombreUsuario(){
@@ -63,15 +128,21 @@ function cargarNombreUsuario(){
     document.getElementById("usuarioConsulta").innerText="ID no proporcionado en URL";
     return;
   }
+
   mostrarSpinner("spinnerLogin");
-  fetch(api+"?id="+id)
-    .then(res=>res.json())
-    .then(data=>{
+
+  fetch(api + "?id=" + encodeURIComponent(id))
+    .then(res => res.json())
+    .then(data => {
       ocultarSpinner("spinnerLogin");
-      if(data==="ERROR"){ document.getElementById("usuarioConsulta").innerText="Usuario no válido"; }
-      else{ document.getElementById("usuarioConsulta").innerText=data.nombre; }
+
+      if(data === "ERROR"){
+        document.getElementById("usuarioConsulta").innerText="Usuario no válido";
+      } else {
+        document.getElementById("usuarioConsulta").innerText=data.nombre;
+      }
     })
-    .catch(err=>{
+    .catch(err => {
       ocultarSpinner("spinnerLogin");
       document.getElementById("usuarioConsulta").innerText="Error al cargar usuario";
       console.error(err);
@@ -83,57 +154,127 @@ cargarNombreUsuario();
 
 // LOGIN
 function verificar(){
-  const pwd = document.getElementById("pwd").value;
+  const pwd = document.getElementById("pwd").value.trim();
+  document.getElementById("error").innerText = "";
+
+  // 🚨 Si está vacía, NO entra
+  if(pwd === ""){
+    document.getElementById("error").innerText = "Debe introducir una contraseña";
+    return;
+  }
+
   mostrarSpinner("spinnerLogin");
-  fetch(api,{ method:"POST", body:new URLSearchParams({id,password:pwd}) })
-    .then(res=>res.text())
-    .then(result=>{
-      ocultarSpinner("spinnerLogin");
-      if(result==="OK"){
-        document.getElementById("login").style.display="none";
-        document.getElementById("contenidoDatos").style.display="block";
-        cargarDatos();
-      } else if(result==="PASSWORD_INCORRECT"){
-        document.getElementById("error").innerText="Contraseña incorrecta";
-      } else {
-        document.getElementById("error").innerText="Error al procesar el login";
-      }
-    });
+
+  fetch(api, {
+    method:"POST",
+    body:new URLSearchParams({
+      action:"login",
+      id:id,
+      password:pwd
+    })
+  })
+  .then(res => res.text())
+  .then(result => {
+    ocultarSpinner("spinnerLogin");
+
+    if(result === "OK"){
+      autenticado = true;
+      document.getElementById("login").style.display="none";
+      document.getElementById("contenidoDatos").style.display="block";
+      cargarDatos();
+    } else if(result === "PASSWORD_INCORRECT"){
+      document.getElementById("error").innerText="Contraseña incorrecta";
+    } else if(result === "PASSWORD_EMPTY"){
+      document.getElementById("error").innerText="Debe introducir una contraseña";
+    } else if(result === "ID_INVALID"){
+      document.getElementById("error").innerText="Usuario no válido";
+    } else {
+      document.getElementById("error").innerText="Error al procesar el login";
+    }
+  })
+  .catch(err => {
+    ocultarSpinner("spinnerLogin");
+    document.getElementById("error").innerText="Error de conexión";
+    console.error(err);
+  });
 }
 
 // CARGAR DATOS
 function cargarDatos(){
+  if(!autenticado){
+    document.getElementById("contenidoDatos").style.display="none";
+    document.getElementById("login").style.display="block";
+    document.getElementById("error").innerText="Debe iniciar sesión correctamente";
+    return;
+  }
+
   mostrarSpinner("spinnerDatos");
-  fetch(api+"?id="+id)
-    .then(res=>res.json())
-    .then(data=>{
+
+  fetch(api + "?id=" + encodeURIComponent(id))
+    .then(res => res.json())
+    .then(data => {
       ocultarSpinner("spinnerDatos");
-      if(data==="ERROR"){ document.body.innerHTML="Enlace no válido"; return; }
-      document.getElementById("saludo").innerText="Estimado/a "+data.nombre;
-      document.getElementById("contenido").innerHTML=`
+
+      if(data === "ERROR"){
+        document.body.innerHTML = "Enlace no válido";
+        return;
+      }
+
+      document.getElementById("saludo").innerText = "Estimado/a " + data.nombre;
+
+      document.getElementById("contenido").innerHTML = `
         <p><b>Documento disponible:</b></p>
         <div class="linkBox">${data.datos}</div>
         <br>
-        <a href="${data.datos}" target="_blank"><button>Abrir documento</button></a>
+        <a href="${data.datos}" target="_blank">
+          <button>Abrir documento</button>
+        </a>
       `;
-      if(data.confirmado==="SI"){
+
+      if(data.confirmado === "SI"){
         document.getElementById("zonaConfirmacion").style.display="none";
         document.getElementById("mensaje").innerHTML="<b>✔ La recepción de datos ya ha sido confirmada previamente.</b>";
       }
+    })
+    .catch(err => {
+      ocultarSpinner("spinnerDatos");
+      document.getElementById("contenido").innerHTML = "Error al cargar los datos";
+      console.error(err);
     });
 }
 
 // CONFIRMAR
 function confirmar(){
+  if(!autenticado){
+    alert("Debe iniciar sesión antes de confirmar.");
+    return;
+  }
+
   if(!document.getElementById("check").checked){
     alert("Debe confirmar primero la recepción.");
     return;
   }
-  fetch(api,{ method:"POST", body:new URLSearchParams({id}) })
-    .then(()=>{
+
+  fetch(api, {
+    method:"POST",
+    body:new URLSearchParams({
+      action:"confirm",
+      id:id
+    })
+  })
+  .then(res => res.text())
+  .then(result => {
+    if(result === "CONFIRMED"){
       document.getElementById("zonaConfirmacion").style.display="none";
       document.getElementById("mensaje").innerHTML="<b>✔ Confirmación registrada correctamente.</b>";
-    });
+    } else {
+      alert("No se pudo registrar la confirmación.");
+    }
+  })
+  .catch(err => {
+    alert("Error al registrar la confirmación.");
+    console.error(err);
+  });
 }
 </script>
 </body>
