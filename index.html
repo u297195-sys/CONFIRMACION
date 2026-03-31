@@ -109,10 +109,9 @@ button:hover{ background:#2f4f6f; }
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
 
-// PEGA AQUÍ TU URL DE APPS SCRIPT
-const api = "https://script.google.com/macros/s/AKfycbz78LbEo3plaQGZShtulwyQB3MRC6igawRyqZCNnNo7HwmAj2C0M-CnFjQm5wKCjkZ0AA/exec";
+// URL de tu Apps Script
+const api = "TU_URL_DE_APPS_SCRIPT_AQUI"; // <- reemplaza con tu URL deploy de Apps Script
 
-// Variable para saber si ha iniciado sesión correctamente
 let autenticado = false;
 
 function mostrarSpinner(id){
@@ -122,7 +121,9 @@ function ocultarSpinner(id){
   document.getElementById(id).style.display="none";
 }
 
+// ====================
 // Cargar nombre al abrir la página
+// ====================
 function cargarNombreUsuario(){
   if(!id){
     document.getElementById("usuarioConsulta").innerText="ID no proporcionado en URL";
@@ -139,7 +140,8 @@ function cargarNombreUsuario(){
       if(data === "ERROR"){
         document.getElementById("usuarioConsulta").innerText="Usuario no válido";
       } else {
-        document.getElementById("usuarioConsulta").innerText=data.nombre;
+        document.getElementById("usuarioConsulta").innerText = data.nombre;
+        document.getElementById("saludo").innerText = "Estimado/a " + data.nombre;
       }
     })
     .catch(err => {
@@ -152,12 +154,13 @@ function cargarNombreUsuario(){
 // Ejecutar al cargar la página
 cargarNombreUsuario();
 
+// ====================
 // LOGIN
+// ====================
 function verificar(){
   const pwd = document.getElementById("pwd").value.trim();
   document.getElementById("error").innerText = "";
 
-  // 🚨 Si está vacía, NO entra
   if(pwd === ""){
     document.getElementById("error").innerText = "Debe introducir una contraseña";
     return;
@@ -199,7 +202,9 @@ function verificar(){
   });
 }
 
-// CARGAR DATOS
+// ====================
+// Cargar datos después de login
+// ====================
 function cargarDatos(){
   if(!autenticado){
     document.getElementById("contenidoDatos").style.display="none";
@@ -219,8 +224,6 @@ function cargarDatos(){
         document.body.innerHTML = "Enlace no válido";
         return;
       }
-
-      document.getElementById("saludo").innerText = "Estimado/a " + data.nombre;
 
       document.getElementById("contenido").innerHTML = `
         <p><b>Documento disponible:</b></p>
@@ -243,7 +246,9 @@ function cargarDatos(){
     });
 }
 
-// CONFIRMAR
+// ====================
+// Confirmación
+// ====================
 function confirmar(){
   if(!autenticado){
     alert("Debe iniciar sesión antes de confirmar.");
